@@ -8,6 +8,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dre1080/recovr v1.0.3
 	github.com/garyburd/redigo v1.6.0
+	github.com/golang/mock v1.1.1
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.7.4

@@ -27,6 +27,9 @@ clean:
 .PHONY: gen tools
 gen:
 	wire ./cmd/service
+	mockgen -source=./internal/backend.go -destination=./mock/service_backend.go -package=mock
+	mockgen -source=./http/accounts.go -destination=./mock/http_accounts.go -package=mock
+	mockgen -source=./pkg/auth/tokens.go -destination=./mock/auth_tokens.go -package=mock
 
 tools:
 	GO111MODULE=off go get -u github.com/google/wire/...
