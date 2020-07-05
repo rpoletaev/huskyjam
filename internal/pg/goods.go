@@ -45,11 +45,21 @@ func (s *Store) Goods() internal.GoodsRepository {
 
 var _ internal.GoodsRepository = (*GoodsRepository)(nil)
 
-func (s *GoodsRepository) Init() {
-	s.db.MustExec(initCategories)
-	s.db.MustExec(initGoods)
-	s.db.MustExec(initGoodsToCats)
-	s.db.MustExec(initGoodsIndex)
+func (s *GoodsRepository) Init() error {
+	if _, err := s.db.Exec(initCategories); err != nil {
+		return err
+	}
+	if _, err := s.db.Exec(initGoods); err != nil {
+		return err
+	}
+	if _, err := s.db.Exec(initGoodsToCats); err != nil {
+		return err
+	}
+	if _, err := s.db.Exec(initGoodsIndex); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *GoodsRepository) CreateCategory(c *internal.Category) error {

@@ -22,8 +22,9 @@ func (s *Store) Accounts() internal.AccountsRepository {
 
 var _ internal.AccountsRepository = (*AccountsRepository)(nil)
 
-func (s *AccountsRepository) Init() {
-	s.db.MustExec(initAccountsSchema)
+func (s *AccountsRepository) Init() error {
+	_, err := s.db.Exec(initAccountsSchema)
+	return err
 }
 
 func (s *AccountsRepository) Create(acc *internal.Account) error {

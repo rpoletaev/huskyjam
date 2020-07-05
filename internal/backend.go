@@ -28,7 +28,7 @@ type Account struct {
 // AccountsRepository allows interact with Accounts storage
 type AccountsRepository interface {
 	// Init creates schema. In most projects we will use migration instead
-	Init()
+	Init() error
 	Create(a *Account) error
 	GetByEmail(email string) (*Account, error)
 }
@@ -53,7 +53,7 @@ type Good struct {
 // GoodsRepository allows interact with Goods storage
 type GoodsRepository interface {
 	// Init creates schema. In most projects we will use migration instead
-	Init()
+	Init() error
 	CreateCategory(c *Category) error
 	UpdateCategory(c *Category) error
 	DeleteCategory(id uint) error
