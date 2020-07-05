@@ -13,12 +13,12 @@ import (
 	"github.com/rs/zerolog/hlog"
 )
 
-type goodsHandler struct {
+type GoodsHandler struct {
 	Store internal.GoodsRepository
 	Log   zerolog.Logger
 }
 
-func (h *goodsHandler) logger(ctx context.Context) *zerolog.Logger {
+func (h *GoodsHandler) logger(ctx context.Context) *zerolog.Logger {
 	id, ok := hlog.IDFromCtx(ctx)
 	var l zerolog.Logger
 	if ok {
@@ -42,7 +42,7 @@ func (req *createGoodRequest) Validate() error {
 	return nil
 }
 
-func (h *goodsHandler) CreateGood(w http.ResponseWriter, r *http.Request) {
+func (h *GoodsHandler) CreateGood(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &createGoodRequest{}
 	if err := unmarshal(r, req); err != nil {
@@ -85,7 +85,7 @@ func (req *updateGoodRequest) Validate() error {
 	return nil
 }
 
-func (h *goodsHandler) UpdateGood(w http.ResponseWriter, r *http.Request) {
+func (h *GoodsHandler) UpdateGood(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &updateGoodRequest{}
 	if err := unmarshal(r, req); err != nil {
@@ -128,7 +128,7 @@ type categoryGoodsResponse struct {
 	Goods []*Good `json:"goods"`
 }
 
-func (h *goodsHandler) CategoryGoods(w http.ResponseWriter, r *http.Request) {
+func (h *GoodsHandler) CategoryGoods(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	vars := mux.Vars(r)
 	categoryID, err := strconv.Atoi(vars["category"])
@@ -153,7 +153,7 @@ func (h *goodsHandler) CategoryGoods(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, resp)
 }
 
-func (h *goodsHandler) DeleteGood(w http.ResponseWriter, r *http.Request) {
+func (h *GoodsHandler) DeleteGood(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -176,7 +176,7 @@ type categoriesResponse struct {
 	Categories []*Category `json:"categories"`
 }
 
-func (h *goodsHandler) CategoriesList(w http.ResponseWriter, r *http.Request) {
+func (h *GoodsHandler) CategoriesList(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	categories, err := h.Store.ListCategories()
 	if err != nil {
@@ -204,7 +204,7 @@ func (c *createCategoryRequest) Validate() error {
 	return nil
 }
 
-func (h *goodsHandler) CreateCategory(w http.ResponseWriter, r *http.Request) {
+func (h *GoodsHandler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &createCategoryRequest{}
 	if err := unmarshal(r, req); err != nil {
@@ -245,7 +245,7 @@ func (req *updateCategoryRequest) Validate() error {
 	return nil
 }
 
-func (h *goodsHandler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
+func (h *GoodsHandler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &updateCategoryRequest{}
 	if err := unmarshal(r, req); err != nil {
@@ -265,7 +265,7 @@ func (h *goodsHandler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *goodsHandler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
+func (h *GoodsHandler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

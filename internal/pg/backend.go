@@ -2,7 +2,6 @@ package pg
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 	"github.com/rpoletaev/huskyjam/internal"
 )
 
@@ -14,6 +13,7 @@ type Config struct {
 
 // Store implements internal Store with postgres db
 type Store struct {
+	*Config
 	db *sqlx.DB
 }
 
@@ -21,12 +21,16 @@ var _ internal.Store = (*Store)(nil)
 
 // Connect fulfill db connection
 func (s *Store) Connect() error {
-	db, err := sqlx.Connect("postgres", "user=foo dbname=bar sslmode=disable")
+	db, err := sqlx.Connect(s.Driver, s.URI)
 	if err != nil {
-		return errors.Wrap(err, "on connect to postgres")
+		return err
 	}
 
 	s.db = db
 
 	return nil
+}
+
+func (s *Store) Close() error {
+	return s.db.Close()
 }

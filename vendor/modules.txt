@@ -21,17 +21,27 @@ github.com/gobuffalo/packr/v2/plog
 # github.com/gomodule/redigo v2.0.0+incompatible
 github.com/gomodule/redigo/internal
 github.com/gomodule/redigo/redis
+# github.com/google/wire v0.4.0
+github.com/google/wire
 # github.com/gorilla/mux v1.7.4
 github.com/gorilla/mux
 # github.com/jmoiron/sqlx v1.2.0
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
+# github.com/joho/godotenv v1.3.0
+github.com/joho/godotenv
+github.com/joho/godotenv/autoload
 # github.com/justinas/alice v1.2.0
 github.com/justinas/alice
 # github.com/karrick/godirwalk v1.15.3
 github.com/karrick/godirwalk
+# github.com/kelseyhightower/envconfig v1.4.0
+github.com/kelseyhightower/envconfig
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
 github.com/konsorten/go-windows-terminal-sequences
+# github.com/lib/pq v1.0.0
+github.com/lib/pq
+github.com/lib/pq/oid
 # github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e
 github.com/logrusorgru/aurora
 # github.com/markbates/errx v1.1.0

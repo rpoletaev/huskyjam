@@ -17,7 +17,7 @@ type PassHashHelper interface {
 	Check(pass, hash string) error
 }
 
-type accountHandler struct {
+type AccountHandler struct {
 	Store internal.AccountsRepository
 	PassHashHelper
 	RefreshRepo internal.TokensRepository
@@ -25,7 +25,7 @@ type accountHandler struct {
 	Log         zerolog.Logger
 }
 
-func (h *accountHandler) logger(ctx context.Context) *zerolog.Logger {
+func (h *AccountHandler) logger(ctx context.Context) *zerolog.Logger {
 	id, ok := hlog.IDFromCtx(ctx)
 	var l zerolog.Logger
 	if ok {
@@ -53,7 +53,7 @@ func (r *signupRequest) Validate() error {
 	return nil
 }
 
-func (h *accountHandler) Signup(w http.ResponseWriter, r *http.Request) {
+func (h *AccountHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 
 	req := &signupRequest{}
@@ -102,7 +102,7 @@ type signinResponse struct {
 	Refresh string `json:"refresh"`
 }
 
-func (h *accountHandler) Signin(w http.ResponseWriter, r *http.Request) {
+func (h *AccountHandler) Signin(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 
 	req := &signinRequest{}
@@ -128,7 +128,7 @@ func (h *accountHandler) Signin(w http.ResponseWriter, r *http.Request) {
 	h.signin(logger, w, claims)
 }
 
-func (h *accountHandler) signin(logger *zerolog.Logger, w http.ResponseWriter, claims *auth.SystemClaims) {
+func (h *AccountHandler) signin(logger *zerolog.Logger, w http.ResponseWriter, claims *auth.SystemClaims) {
 	token, err := h.RefreshRepo.New(claims)
 	if err != nil {
 		logger.Error().Err(err).Str("email", claims.Email).Msg("on create refresh token")
@@ -165,7 +165,7 @@ func (r *refreshRequest) Validate() error {
 	return nil
 }
 
-func (h *accountHandler) Refresh(w http.ResponseWriter, r *http.Request) {
+func (h *AccountHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &refreshRequest{}
 	if err := unmarshal(r, req); err != nil {

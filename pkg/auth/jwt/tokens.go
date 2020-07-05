@@ -29,10 +29,10 @@ type CurrentTimeGenerator interface {
 // Tokens implements basic services functions and middlewares
 type Tokens struct {
 	SigningMethod jwt.SigningMethod
-	UUID          UUIDGenerator
+	UUID          UUIDGenerator `wire:"-"`
 	TimeToLive    time.Duration
 	Secret        string
-	TimeGetter    CurrentTimeGenerator
+	TimeGetter    CurrentTimeGenerator `wire:"-"`
 	Debug         bool
 
 	mu sync.RWMutex
