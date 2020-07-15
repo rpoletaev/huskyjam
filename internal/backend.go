@@ -21,8 +21,8 @@ type Account struct {
 	ID        uint
 	Email     string
 	Pass      string
-	CreatedAt time.Time
-	DeletedAt *time.Time
+	CreatedAt time.Time  `db:"created_at"`
+	DeletedAt *time.Time `db:"deleted_at"`
 }
 
 // AccountsRepository allows interact with Accounts storage

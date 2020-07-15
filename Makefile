@@ -27,6 +27,7 @@ clean:
 .PHONY: gen tools
 gen:
 	wire ./cmd/service
+	swag init -d ./http -g api.go -o ./cmd/service/docs
 	mockgen -source=./internal/backend.go -destination=./mock/service_backend.go -package=mock
 	mockgen -source=./http/accounts.go -destination=./mock/http_accounts.go -package=mock
 	mockgen -source=./pkg/auth/tokens.go -destination=./mock/auth_tokens.go -package=mock

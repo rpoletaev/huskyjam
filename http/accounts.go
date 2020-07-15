@@ -25,21 +25,18 @@ type AccountHandler struct {
 	Log         zerolog.Logger
 }
 
-func (h *AccountHandler) logger(ctx context.Context) *zerolog.Logger {
+func (h *AccountHandler) logger(ctx context.Context) zerolog.Logger {
 	id, ok := hlog.IDFromCtx(ctx)
-	var l zerolog.Logger
 	if ok {
-		l = h.Log.With().Str("req_id", id.String()).Logger()
-		return &l
+		return h.Log.With().Str("req_id", id.String()).Logger()
 	}
 
-	l = h.Log.With().Logger()
-	return &l
+	return h.Log.With().Logger()
 }
 
 type signupRequest struct {
-	Email string `json:"email"`
-	Pass  string `json:"pass"`
+	Email string `json:"email" example:"some@email.zone" validate:"required"`
+	Pass  string `json:"pass" example:"somepass" validate:"required"`
 }
 
 func (r *signupRequest) Validate() error {
@@ -53,6 +50,17 @@ func (r *signupRequest) Validate() error {
 	return nil
 }
 
+// Signup godoc
+// @Summary Allows to signup
+// @Description Signup user
+// @ID signup
+// @Accept  json
+// @Produce  json
+// @Param signupRequest body signupRequest true "Add account"
+// @Success 201
+// @Failure 500
+// @Failure 400
+// @Router /auth/signup [post]
 func (h *AccountHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 
@@ -86,8 +94,8 @@ func (h *AccountHandler) Signup(w http.ResponseWriter, r *http.Request) {
 }
 
 type signinRequest struct {
-	Email string `json:"email"`
-	Pass  string `json:"pass"`
+	Email string `json:"email" example:"some@email.zone" validate:"required"`
+	Pass  string `json:"pass" example:"somepass" validate:"required"`
 }
 
 func (r *signinRequest) Validate() error {
@@ -102,6 +110,18 @@ type signinResponse struct {
 	Refresh string `json:"refresh"`
 }
 
+// Signin godoc
+// @Summary Allows to signin
+// @Description Signin user
+// @ID signin
+// @Accept  json
+// @Produce  json
+// @Param signinRequest body signinRequest true "Sign in data"
+// @Success 200 {object} signinResponse
+// @Failure 500
+// @Failure 400
+// @Failure 401
+// @Router /auth/signin [post]
 func (h *AccountHandler) Signin(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 
@@ -120,6 +140,12 @@ func (h *AccountHandler) Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := h.PassHashHelper.Check(acc.Pass, req.Pass); err != nil {
+		logger.Error().Err(err).Str("email", req.Email).Msg("on check password")
+		http.Error(w, "wrong password", http.StatusUnauthorized)
+		return
+	}
+
 	claims := &auth.SystemClaims{
 		ID:    acc.ID,
 		Email: acc.Email,
@@ -128,7 +154,7 @@ func (h *AccountHandler) Signin(w http.ResponseWriter, r *http.Request) {
 	h.signin(logger, w, claims)
 }
 
-func (h *AccountHandler) signin(logger *zerolog.Logger, w http.ResponseWriter, claims *auth.SystemClaims) {
+func (h *AccountHandler) signin(logger zerolog.Logger, w http.ResponseWriter, claims *auth.SystemClaims) {
 	token, err := h.RefreshRepo.New(claims)
 	if err != nil {
 		logger.Error().Err(err).Str("email", claims.Email).Msg("on create refresh token")
@@ -155,7 +181,7 @@ func (h *AccountHandler) signin(logger *zerolog.Logger, w http.ResponseWriter, c
 }
 
 type refreshRequest struct {
-	Token string `json:"token"`
+	Token string `json:"token" validate:"required"`
 }
 
 func (r *refreshRequest) Validate() error {
@@ -165,6 +191,18 @@ func (r *refreshRequest) Validate() error {
 	return nil
 }
 
+// Refresh godoc
+// @Summary Update access token
+// @Description update access token by produce refresh token
+// @ID refresh
+// @Accept  json
+// @Produce  json
+// @Param refreshRequest body refreshRequest true "Refresh data"
+// @Success 200 {object} signinResponse
+// @Failure 500
+// @Failure 400
+// @Failure 401
+// @Router /auth/refresh [post]
 func (h *AccountHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &refreshRequest{}

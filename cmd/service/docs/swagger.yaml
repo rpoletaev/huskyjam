@@ -1,0 +1,321 @@
+basePath: /
+definitions:
+  http.Category:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  http.createCategoryRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  http.createGoodRequest:
+    properties:
+      categories:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  http.refreshRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  http.signinRequest:
+    properties:
+      email:
+        example: some@email.zone
+        type: string
+      pass:
+        example: somepass
+        type: string
+    required:
+    - email
+    - pass
+    type: object
+  http.signinResponse:
+    properties:
+      access:
+        type: string
+      refresh:
+        type: string
+    type: object
+  http.signupRequest:
+    properties:
+      email:
+        example: some@email.zone
+        type: string
+      pass:
+        example: somepass
+        type: string
+    required:
+    - email
+    - pass
+    type: object
+  http.updateCategoryRequest:
+    properties:
+      category:
+        $ref: '#/definitions/http.Category'
+    required:
+    - category
+    type: object
+  http.updateGoodRequest:
+    properties:
+      categories:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - id
+    - name
+    type: object
+info:
+  contact: {}
+  description: This is a sample server celler server.
+  license: {}
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /admin/categories:
+    post:
+      consumes:
+      - application/json
+      description: Creates category
+      operationId: CreateCategory
+      parameters:
+      - description: New Category
+        in: body
+        name: createCategoryRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.createCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201": {}
+        "400": {}
+        "500": {}
+      summary: Creates category
+    put:
+      consumes:
+      - application/json
+      description: Updates category
+      operationId: UpdateCategory
+      parameters:
+      - description: Updated Category
+        in: body
+        name: updateCategoryRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.updateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200": {}
+        "400": {}
+        "500": {}
+      summary: Updates category
+  /admin/categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete category
+      operationId: DeleteCategory
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200": {}
+        "400": {}
+        "404": {}
+        "500": {}
+      summary: Delete category
+  /admin/goods:
+    post:
+      consumes:
+      - application/json
+      description: Creates good
+      operationId: CreateGood
+      parameters:
+      - description: New good
+        in: body
+        name: createGoodRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.createGoodRequest'
+      produces:
+      - application/json
+      responses:
+        "201": {}
+        "400": {}
+        "500": {}
+      summary: Creates good
+    put:
+      consumes:
+      - application/json
+      description: Updates good
+      operationId: UpdateGood
+      parameters:
+      - description: Updated good
+        in: body
+        name: updateGoodRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.updateGoodRequest'
+      produces:
+      - application/json
+      responses:
+        "200": {}
+        "400": {}
+        "500": {}
+      summary: Updates good
+  /admin/goods/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete good
+      operationId: DeleteGood
+      parameters:
+      - description: Good ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200": {}
+        "400": {}
+        "404": {}
+        "500": {}
+      summary: Delete good
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: update access token by produce refresh token
+      operationId: refresh
+      parameters:
+      - description: Refresh data
+        in: body
+        name: refreshRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.refreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.signinResponse'
+        "400": {}
+        "401": {}
+        "500": {}
+      summary: Update access token
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Signin user
+      operationId: signin
+      parameters:
+      - description: Sign in data
+        in: body
+        name: signinRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.signinRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.signinResponse'
+        "400": {}
+        "401": {}
+        "500": {}
+      summary: Allows to signin
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Signup user
+      operationId: signup
+      parameters:
+      - description: Add account
+        in: body
+        name: signupRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.signupRequest'
+      produces:
+      - application/json
+      responses:
+        "201": {}
+        "400": {}
+        "500": {}
+      summary: Allows to signup
+  /shop/categories:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of categories
+      operationId: CategoriesList
+      produces:
+      - application/json
+      responses:
+        "200": {}
+        "404": {}
+        "500": {}
+      summary: Returns list of categories
+  /shop/categories/{category}/goods:
+    get:
+      consumes:
+      - application/json
+      description: Returns goods for a category
+      operationId: CategoryGoods
+      parameters:
+      - description: Category ID
+        in: path
+        name: category
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200": {}
+        "400": {}
+        "404": {}
+        "500": {}
+      summary: Returns goods for a category
+securityDefinitions:
+  X-Auth-Key:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

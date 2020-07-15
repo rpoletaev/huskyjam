@@ -31,7 +31,7 @@ func (h *GoodsHandler) logger(ctx context.Context) *zerolog.Logger {
 }
 
 type createGoodRequest struct {
-	Name       string `json:"name"`
+	Name       string `json:"name" validate:"required"`
 	Categories []uint `json:"categories"`
 }
 
@@ -42,6 +42,17 @@ func (req *createGoodRequest) Validate() error {
 	return nil
 }
 
+// CreateGood godoc
+// @Summary Creates good
+// @Description Creates good
+// @ID CreateGood
+// @Accept  json
+// @Produce  json
+// @Param createGoodRequest body createGoodRequest true "New good"
+// @Success 201
+// @Failure 500
+// @Failure 400
+// @Router /admin/goods [post]
 func (h *GoodsHandler) CreateGood(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &createGoodRequest{}
@@ -70,14 +81,14 @@ func (h *GoodsHandler) CreateGood(w http.ResponseWriter, r *http.Request) {
 }
 
 type updateGoodRequest struct {
-	ID         uint   `json:"id"`
-	Name       string `json:"name"`
+	ID         uint   `json:"id" validate:"required"`
+	Name       string `json:"name" validate:"required"`
 	Categories []uint `json:"categories"`
 }
 
 func (req *updateGoodRequest) Validate() error {
 	if req.ID <= 0 {
-		return errors.Wrap(errValidateError, "id should be greather than 0")
+		return errors.Wrap(errValidateError, "id should be greater than 0")
 	}
 	if len(req.Name) == 0 {
 		return errors.Wrap(errValidateError, "length of good name shold be greater than 0")
@@ -85,6 +96,17 @@ func (req *updateGoodRequest) Validate() error {
 	return nil
 }
 
+// UpdateGood godoc
+// @Summary Updates good
+// @Description Updates good
+// @ID UpdateGood
+// @Accept  json
+// @Produce  json
+// @Param updateGoodRequest body updateGoodRequest true "Updated good"
+// @Success 200
+// @Failure 500
+// @Failure 400
+// @Router /admin/goods [put]
 func (h *GoodsHandler) UpdateGood(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &updateGoodRequest{}
@@ -114,8 +136,8 @@ func (h *GoodsHandler) UpdateGood(w http.ResponseWriter, r *http.Request) {
 }
 
 type Category struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
+	ID   uint   `json:"id" validate:"required"`
+	Name string `json:"name" validate:"required"`
 }
 
 type Good struct {
@@ -128,6 +150,18 @@ type categoryGoodsResponse struct {
 	Goods []*Good `json:"goods"`
 }
 
+// CategoryGoods godoc
+// @Summary Returns goods for a category
+// @Description Returns goods for a category
+// @ID CategoryGoods
+// @Accept  json
+// @Produce  json
+// @Param category path int true "Category ID"
+// @Success 200
+// @Failure 500
+// @Failure 400
+// @Failure 404
+// @Router /shop/categories/{category}/goods [get]
 func (h *GoodsHandler) CategoryGoods(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	vars := mux.Vars(r)
@@ -153,6 +187,18 @@ func (h *GoodsHandler) CategoryGoods(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, resp)
 }
 
+// DeleteGood godoc
+// @Summary Delete good
+// @Description Delete good
+// @ID DeleteGood
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Good ID"
+// @Success 200
+// @Failure 500
+// @Failure 400
+// @Failure 404
+// @Router /admin/goods/{id} [delete]
 func (h *GoodsHandler) DeleteGood(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	vars := mux.Vars(r)
@@ -176,6 +222,16 @@ type categoriesResponse struct {
 	Categories []*Category `json:"categories"`
 }
 
+// CategoriesList godoc
+// @Summary Returns list of categories
+// @Description Returns list of categories
+// @ID CategoriesList
+// @Accept  json
+// @Produce  json
+// @Success 200
+// @Failure 500
+// @Failure 404
+// @Router /shop/categories [get]
 func (h *GoodsHandler) CategoriesList(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	categories, err := h.Store.ListCategories()
@@ -194,7 +250,7 @@ func (h *GoodsHandler) CategoriesList(w http.ResponseWriter, r *http.Request) {
 }
 
 type createCategoryRequest struct {
-	Name string
+	Name string `json:"name" validate:"required"`
 }
 
 func (c *createCategoryRequest) Validate() error {
@@ -204,6 +260,17 @@ func (c *createCategoryRequest) Validate() error {
 	return nil
 }
 
+// CreateCategory godoc
+// @Summary Creates category
+// @Description Creates category
+// @ID CreateCategory
+// @Accept  json
+// @Produce  json
+// @Param createCategoryRequest body createCategoryRequest true "New Category"
+// @Success 201
+// @Failure 500
+// @Failure 400
+// @Router /admin/categories [post]
 func (h *GoodsHandler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &createCategoryRequest{}
@@ -227,7 +294,7 @@ func (h *GoodsHandler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 type updateCategoryRequest struct {
-	Category *Category
+	Category *Category `json:"category" validate:"required"`
 }
 
 func (req *updateCategoryRequest) Validate() error {
@@ -245,6 +312,17 @@ func (req *updateCategoryRequest) Validate() error {
 	return nil
 }
 
+// UpdateCategory godoc
+// @Summary Updates category
+// @Description Updates category
+// @ID UpdateCategory
+// @Accept  json
+// @Produce  json
+// @Param updateCategoryRequest body updateCategoryRequest true "Updated Category"
+// @Success 200
+// @Failure 500
+// @Failure 400
+// @Router /admin/categories [put]
 func (h *GoodsHandler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	req := &updateCategoryRequest{}
@@ -265,6 +343,18 @@ func (h *GoodsHandler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// DeleteCategory godoc
+// @Summary Delete category
+// @Description Delete category
+// @ID DeleteCategory
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Category ID"
+// @Success 200
+// @Failure 500
+// @Failure 400
+// @Failure 404
+// @Router /admin/categories/{id} [delete]
 func (h *GoodsHandler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	logger := h.logger(r.Context())
 	vars := mux.Vars(r)

@@ -36,6 +36,23 @@ func provideAPIConfig(c *Config) *http.Config {
 func providePassHelper() *bcrypt.PassManager {
 	return &bcrypt.PassManager{}
 }
+
+func provideGoodsHandler(logger zerolog.Logger, store internal.Store) *http.GoodsHandler {
+	return &http.GoodsHandler{
+		Store: store.Goods(),
+		Log:   logger.With().Str("service", "goods").Logger(),
+	}
+}
+
+func provideAccountsHandler(logger zerolog.Logger, store internal.Store, kvstore internal.KVStore, passHelper http.PassHashHelper, tokensHelper auth.Tokens) *http.AccountHandler {
+	return &http.AccountHandler{
+		Store:          store.Accounts(),
+		PassHashHelper: passHelper,
+		RefreshRepo:    kvstore.Tokens(),
+		Auth:           tokensHelper,
+		Log:            logger.With().Str("service", "account").Logger(),
+	}
+}
 func provideApp(logger zerolog.Logger, c *Config) *App {
 	wire.Build(
 		provideJWT,
@@ -43,6 +60,8 @@ func provideApp(logger zerolog.Logger, c *Config) *App {
 		provideRedis,
 		provideAPIConfig,
 		providePassHelper,
+		provideGoodsHandler,
+		provideAccountsHandler,
 		wire.Struct(new(App), "*"),
 		wire.Struct(new(http.Api), "*"),
 		wire.Bind(new(http.PassHashHelper), new(*bcrypt.PassManager)),

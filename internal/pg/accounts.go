@@ -6,11 +6,12 @@ import (
 
 const (
 	initAccountsSchema = `CREATE TABLE IF NOT EXISTS accounts (
-		id integer PRIMARY KEY,
+		id SERIAL PRIMARY KEY,
 		email text NOT NULL,
-		created_at timestamp DEFAULT current_timestamp
-		deleted_at timestamp 
-		CONSTRAINT unique_acc_email UNIQUE(email),
+		pass text NOT NULL,
+		created_at timestamp DEFAULT current_timestamp,
+		deleted_at timestamp, 
+		CONSTRAINT unique_acc_email UNIQUE(email)
 		)`
 )
 
@@ -23,13 +24,16 @@ func (s *Store) Accounts() internal.AccountsRepository {
 var _ internal.AccountsRepository = (*AccountsRepository)(nil)
 
 func (s *AccountsRepository) Init() error {
-	_, err := s.db.Exec(initAccountsSchema)
-	return err
+	if _, err := s.db.Exec(initAccountsSchema); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *AccountsRepository) Create(acc *internal.Account) error {
 
-	if _, err := s.db.Exec("INSERT INTO accounts (email, pass) VALUES (:email, :pass)", acc); err != nil {
+	if _, err := s.db.NamedExec("INSERT INTO accounts (email, pass) VALUES (:email, :pass)", acc); err != nil {
 		if uniqueViolation(err) {
 			return internal.ErrAlreadyExists
 		}
@@ -42,7 +46,7 @@ func (s *AccountsRepository) Create(acc *internal.Account) error {
 
 func (s *AccountsRepository) GetByEmail(email string) (*internal.Account, error) {
 	acc := &internal.Account{}
-	if err := s.db.Get(acc, "SELECT * FROM accounts WHERE email = $1 and deleted_at IS NOT NULL", email); err != nil {
+	if err := s.db.Get(acc, "SELECT * FROM accounts WHERE email = $1 and deleted_at IS NULL", email); err != nil {
 		if notFound(err) {
 			return nil, internal.ErrNotFound
 		}

@@ -21,7 +21,9 @@ func (b *Backend) Connect() error {
 	b.Pool = &redis.Pool{
 		MaxIdle:     b.MaxIdle,
 		IdleTimeout: time.Duration(time.Duration(b.IdleTimeoutSeconds) * time.Second),
-		Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", b.Address) },
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial("tcp", b.Address)
+		},
 	}
 	return nil
 }

@@ -8,8 +8,10 @@ package main
 import (
 	"github.com/rpoletaev/huskyjam/http"
 	"github.com/rpoletaev/huskyjam/http/bcrypt"
+	"github.com/rpoletaev/huskyjam/internal"
 	"github.com/rpoletaev/huskyjam/internal/pg"
 	"github.com/rpoletaev/huskyjam/internal/redis"
+	"github.com/rpoletaev/huskyjam/pkg/auth"
 	"github.com/rpoletaev/huskyjam/pkg/auth/jwt"
 	"github.com/rs/zerolog"
 )
@@ -27,8 +29,12 @@ func provideApp(logger zerolog.Logger, c *Config) *App {
 	tokens := provideJWT(c)
 	config := provideAPIConfig(c)
 	passManager := providePassHelper()
+	accountHandler := provideAccountsHandler(logger, store, backend, passManager, tokens)
+	goodsHandler := provideGoodsHandler(logger, store)
 	api := &http.Api{
 		Config:     config,
+		Accounts:   accountHandler,
+		Goods:      goodsHandler,
 		Tokens:     tokens,
 		Store:      store,
 		HashHelper: passManager,
@@ -67,4 +73,21 @@ func provideAPIConfig(c *Config) *http.Config {
 
 func providePassHelper() *bcrypt.PassManager {
 	return &bcrypt.PassManager{}
+}
+
+func provideGoodsHandler(logger zerolog.Logger, store internal.Store) *http.GoodsHandler {
+	return &http.GoodsHandler{
+		Store: store.Goods(),
+		Log:   logger.With().Str("service", "goods").Logger(),
+	}
+}
+
+func provideAccountsHandler(logger zerolog.Logger, store internal.Store, kvstore internal.KVStore, passHelper http.PassHashHelper, tokensHelper auth.Tokens) *http.AccountHandler {
+	return &http.AccountHandler{
+		Store:          store.Accounts(),
+		PassHashHelper: passHelper,
+		RefreshRepo:    kvstore.Tokens(),
+		Auth:           tokensHelper,
+		Log:            logger.With().Str("service", "account").Logger(),
+	}
 }

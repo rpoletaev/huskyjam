@@ -11,6 +11,7 @@ RUN addgroup -g ${USER_G_ID} ${USER_G} && \
     adduser -D --home /app -u ${USER_ID} -G ${USER_G} ${USER}
 WORKDIR /app
 COPY --from=builder /huskyjam/bin/service /app
-# added for future if ssl will need
+COPY --from=builder /huskyjam/cmd/service/docs /app
+# added for future if ssl will needed
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 ENTRYPOINT ["/app/service"]

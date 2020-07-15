@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	errValidateError error = errors.New("validate error")
+	errValidateError error = errors.New("validation error")
 )
 
 type Validator interface {
