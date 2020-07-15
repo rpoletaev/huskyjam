@@ -117,7 +117,6 @@ github.com/stretchr/testify/require
 github.com/swaggo/files
 # github.com/swaggo/http-swagger v0.0.0-20200308142732-58ac5e232fba
 github.com/swaggo/http-swagger
-github.com/swaggo/http-swagger/example/gorilla/docs
 # github.com/swaggo/swag v1.6.7
 github.com/swaggo/swag
 # github.com/valyala/bytebufferpool v1.0.0

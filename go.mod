@@ -10,7 +10,6 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dre1080/recovr v1.0.3
 	github.com/garyburd/redigo v1.6.0
-	github.com/go-mixins/log v0.2.1 // indirect
 	github.com/go-openapi/spec v0.19.8 // indirect
 	github.com/go-openapi/swag v0.19.9 // indirect
 	github.com/golang/mock v1.4.3
